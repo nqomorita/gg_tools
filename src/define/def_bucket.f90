@@ -55,7 +55,6 @@ contains
     ggt_bucket_search%ths = 1.0d-3*minbb
 
     n_all = n_div(1)*n_div(2)*n_div(3)
-    allocate(ggt_bucket_search%cell(n_all))
     allocate(ggt_bucket_search%cell_0d(n_all))
     allocate(ggt_bucket_search%cell_1d(n_all))
     allocate(ggt_bucket_search%cell_2d(n_all))
@@ -110,8 +109,8 @@ contains
     integer(kint) :: add(1), nid
 
     add = id
-    call monolis_append_I_1d(ggt_bucket_search%cell(in)%id, 1, add)
-    ggt_bucket_search%cell(in)%nid = ggt_bucket_search%cell(in)%nid + 1
+    call monolis_append_I_1d(ggt_bucket_search%cell_3d(in)%id, 1, add)
+    ggt_bucket_search%cell_3d(in)%nid = ggt_bucket_search%cell_3d(in)%nid + 1
   end subroutine gg_tools_neighbor_search_push_main
 
   !> @ingroup bucket
@@ -138,11 +137,11 @@ contains
     call get_int_coordinate(ggt_bucket_search, pos, id)
     in = get_index(ggt_bucket_search%n_div, id(1), id(2), id(3))
 
-    nid = ggt_bucket_search%cell(in)%nid
+    nid = ggt_bucket_search%cell_3d(in)%nid
 
     if(nid > 0)then
       call monolis_alloc_I_1d(id, nid)
-      id = ggt_bucket_search%cell(in)%id
+      id = ggt_bucket_search%cell_3d(in)%id
     endif
   end subroutine gg_tools_neighbor_search_get_by_position
 
@@ -186,9 +185,9 @@ contains
     do y = imin(2), imax(2)
     do x = imin(1), imax(1)
       in = get_index(ggt_bucket_search%n_div, x, y, z)
-      if(ggt_bucket_search%cell(in)%nid > 0)then
-        call monolis_append_I_1d(tmp, ggt_bucket_search%cell(in)%nid, ggt_bucket_search%cell(in)%id)
-        nid = nid + ggt_bucket_search%cell(in)%nid
+      if(ggt_bucket_search%cell_3d(in)%nid > 0)then
+        call monolis_append_I_1d(tmp, ggt_bucket_search%cell_3d(in)%nid, ggt_bucket_search%cell_3d(in)%id)
+        nid = nid + ggt_bucket_search%cell_3d(in)%nid
       endif
     enddo
     enddo
@@ -211,7 +210,10 @@ contains
     implicit none
     !> バケット検索構造体
     type(type_gg_tools_bucket_search) :: ggt_bucket_search
-    deallocate(ggt_bucket_search%cell)
+    deallocate(ggt_bucket_search%cell_0d)
+    deallocate(ggt_bucket_search%cell_1d)
+    deallocate(ggt_bucket_search%cell_2d)
+    deallocate(ggt_bucket_search%cell_3d)
   end subroutine gg_tools_neighbor_search_finalize
 
   !> @ingroup dev
