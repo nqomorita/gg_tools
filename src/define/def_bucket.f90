@@ -1,5 +1,5 @@
 !> バケットセルモジュール
-module mod_def_bucket
+module mod_gg_tools_def_bucket
   use mod_monolis_utils
   implicit none
 
@@ -23,7 +23,7 @@ module mod_def_bucket
     real(kdouble) :: dx(3)
     !> 検索領域の判定閾値
     real(kdouble) :: ths
-    !> バケットセル構造体（配列サイズ nx × ny × nz）
+    !> 要素次元ごとのバケットセル構造体（配列サイズ nx × ny × nz）
     type(type_gg_tools_bucket_search_main), allocatable :: cell_0d(:)
     type(type_gg_tools_bucket_search_main), allocatable :: cell_1d(:)
     type(type_gg_tools_bucket_search_main), allocatable :: cell_2d(:)
@@ -310,4 +310,4 @@ contains
     if(id(2) > ggt_bucket_search%n_div(2)) id(2) = ggt_bucket_search%n_div(2)
     if(id(3) > ggt_bucket_search%n_div(3)) id(3) = ggt_bucket_search%n_div(3)
   end subroutine get_int_coordinate
-end module mod_def_bucket
+end module mod_gg_tools_def_bucket

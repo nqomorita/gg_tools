@@ -60,7 +60,8 @@ LIB_TARGET = $(LIB_DIR)/$(LIBRARY)
 
 ##> source file define
 SRC_DEF = \
-  def_bucket.f90
+  def_bucket.f90 \
+  distance_determination.f90
 
 ##> C wrapper section
 #SRC_GRAPH_C =

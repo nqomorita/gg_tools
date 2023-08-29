@@ -9,19 +9,24 @@ contains
   subroutine gg_tools_def_bucket_test()
     implicit none
 
+    !# バケット検索用テスト
+    call gg_tools_bucket_initialize_test()
+    call gg_tools_bucket_search_test()
+
+    !# 一時的なテスト
     call monolis_utils_aabb_test()
     call monolis_utils_kdtree_test()
   end subroutine gg_tools_def_bucket_test
 
-  !subroutine gg_tools_dlb_initialize_test()
-  !  implicit none
-  !  call monolis_std_log_string("gg_tools_dlb_initialize")
-  !end subroutine gg_tools_dlb_initialize_test
+  subroutine gg_tools_bucket_initialize_test()
+    implicit none
+    call monolis_std_log_string("")
+  end subroutine gg_tools_bucket_initialize_test
 
-  !subroutine gg_tools_dlb_finalize_test()
-  !  implicit none
-  !  call monolis_std_log_string("gg_tools_dlb_finalize")
-  !end subroutine gg_tools_dlb_finalize_test
+  subroutine gg_tools_bucket_search_test()
+    implicit none
+    call monolis_std_log_string("")
+  end subroutine gg_tools_bucket_search_test
 
 !> temporary monolis_utils test
   subroutine monolis_utils_aabb_test()
