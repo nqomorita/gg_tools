@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "gedatsu_graph_convert_c.h"
+//#include "gg_tools.h"
 
 /**
  * @defgroup graph_conv グラフデータ処理関数群（グラフデータ変換関数）

@@ -1,4 +1,4 @@
-#> gedatsu Makefile
+#> gg_tools Makefile
 
 ##> compiler setting
 FC     = mpif90
@@ -9,7 +9,7 @@ CFLAGS = -fPIC -O2
 ##> directory setting
 MOD_DIR = -J ./include
 INCLUDE = -I /usr/include -I ./include -I ./submodule/monolis_utils/include
-USE_LIB = -L./lib -lgedatsu -L./submodule/monolis_utils/lib -lmonolis_utils -lmetis
+USE_LIB = -L./lib -lgg_tools -L./submodule/monolis_utils/lib -lmonolis_utils
 BIN_DIR = ./bin
 SRC_DIR = ./src
 TST_DIR = ./src_test
@@ -60,8 +60,7 @@ LIB_TARGET = $(LIB_DIR)/$(LIBRARY)
 
 ##> source file define
 SRC_DEF = \
-  def_graph.f90 \
-  def_dlb.f90
+  def_bucket.f90
 
 ##> C wrapper section
 #SRC_GRAPH_C =
