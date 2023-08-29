@@ -1,0 +1,51 @@
+image: nqoki709/monolis_build:latest
+
+stages:
+  - lib_build
+  - test
+  - doxy_build
+  - deploy
+
+build_gg_tools:
+  stage: lib_build
+  script:
+    - ./install_lib.sh
+    - make FLAGS=DEBUG
+  artifacts:
+    paths:
+      - bin
+      - src_test
+      - wrapper_test
+
+test_gedatsu:
+  stage: test
+  script:
+    - cd src_test
+    - ./run.CI.sh
+#    - cd ../wrapper_test
+#    - ./run.sh
+  dependencies:
+    - build_gg_tools
+
+doxygen_gg_tools:
+  stage: doxy_build
+  script:
+    - cd manual/fortran
+    - doxygen
+    - cd ../c
+    - doxygen
+  artifacts:
+    paths:
+      - manual
+
+pages:
+  stage: deploy
+  dependencies:
+    - doxygen_gg_tools
+  script:
+    - mkdir public
+    - mv manual/fortran/html public/fortran
+    - mv manual/c/html public/c
+  artifacts:
+    paths:
+      - public

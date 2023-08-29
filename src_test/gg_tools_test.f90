@@ -6,6 +6,8 @@ program gg_tools_test
 
   call monolis_mpi_initialize()
 
+  call monolis_utils_aabb_test()
+  call monolis_utils_kdtree_test()
   call gg_tools_def_bucket_test()
 
   call monolis_mpi_finalize()
