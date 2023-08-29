@@ -1,7 +1,7 @@
 !> バケットセルテストモジュール
 module mod_gg_tools_def_bucket_test
-  use mod_gg_tools
   use mod_monolis_utils
+  use mod_gg_tools
   implicit none
 
 contains

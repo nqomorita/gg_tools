@@ -36,7 +36,7 @@ contains
         !>
         real(8), intent(in) :: local_pos(3)
         !>
-        real(8), intent(out) :: weight(n_base, 3)
+        real(8), intent(out) :: weight(n_base)
       end subroutine shape_func
     end interface
 
@@ -77,7 +77,7 @@ contains
   end subroutine gg_tools_get_distance_3d
 
   !> @ingroup distance
-  !> 距離判定関数
+  !> 形状関数の微分値の取得（中心差分）
   subroutine get_shapefunc_deriv_3d(n_base, shape_func, local_pos, eps, deriv)
     implicit none
     !> 要素を構成する形状関数の個数
@@ -98,13 +98,13 @@ contains
         !>
         real(8), intent(in) :: local_pos(3)
         !>
-        real(8), intent(out) :: weight(n_base, 3)
+        real(8), intent(out) :: weight(n_base)
       end subroutine shape_func
     end interface
 
-    integer(kint) :: dim, i
+    integer(kint) :: dim
     real(kdouble) :: pos(3)
-    real(kdouble) :: n1(n_base), n2(n_base), n3(n_base)
+    real(kdouble) :: n1(n_base), n2(n_base)
 
     do dim = 1, 3
       pos = local_pos
@@ -112,14 +112,10 @@ contains
       call shape_func(n_base, pos, n1)
 
       pos = local_pos
-      pos(dim) = pos(dim)
+      pos(dim) = pos(dim) + eps
       call shape_func(n_base, pos, n2)
 
-      pos = local_pos
-      pos(dim) = pos(dim) + eps
-      call shape_func(n_base, pos, n3)
-
-      deriv(:,i) = (n1 - 2.0d0*n2 + n3)/(eps*eps)
+      deriv(:,dim) = (n2 - n1)/(2.0d0*eps)
     enddo
   end subroutine get_shapefunc_deriv_3d
 
