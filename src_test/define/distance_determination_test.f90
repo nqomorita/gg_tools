@@ -10,57 +10,67 @@ contains
     implicit none
 
     call get_shapefunc_deriv_3d_test()
+    call gg_tools_get_distance_3d_test()
   end subroutine gg_tools_distance_determination_test
 
-  subroutine C3D8_shapefunc(n_base, local, func)
+  subroutine gg_tools_get_distance_3d_test()
     implicit none
-    integer(kint), intent(in) :: n_base
-    real(kdouble), intent(in) :: local(3)
-    real(kdouble), intent(out) :: func(n_base)
+    integer(kint) :: n_base
+    real(kdouble) :: coord(3,8)
+    pointer :: shape_func
+    real(kdouble) :: global_pos(3)
+    real(kdouble) :: local_pos(3)
+    real(kdouble) :: ths
+    real(kdouble) :: ths_up
+    real(kdouble) :: eps
+    real(kdouble) :: ans(3)
+    logical :: is_converge
 
-    func(1) = 0.125d0*(1.0d0-local(1))*(1.0d0-local(2))*(1.0d0-local(3))
-    func(2) = 0.125d0*(1.0d0+local(1))*(1.0d0-local(2))*(1.0d0-local(3))
-    func(3) = 0.125d0*(1.0d0+local(1))*(1.0d0+local(2))*(1.0d0-local(3))
-    func(4) = 0.125d0*(1.0d0-local(1))*(1.0d0+local(2))*(1.0d0-local(3))
-    func(5) = 0.125d0*(1.0d0-local(1))*(1.0d0-local(2))*(1.0d0+local(3))
-    func(6) = 0.125d0*(1.0d0+local(1))*(1.0d0-local(2))*(1.0d0+local(3))
-    func(7) = 0.125d0*(1.0d0+local(1))*(1.0d0+local(2))*(1.0d0+local(3))
-    func(8) = 0.125d0*(1.0d0-local(1))*(1.0d0+local(2))*(1.0d0+local(3))
-  end subroutine C3D8_shapefunc
+    interface
+      subroutine shape_func(n_base, local_pos, weight)
+        !> 要素を構成する形状関数の個数
+        integer(4), intent(in) :: n_base
+        !> 入力座標に最も近い局所座標
+        real(8), intent(in) :: local_pos(3)
+        !> 形状関数の重み
+        real(8), intent(out) :: weight(n_base)
+      end subroutine shape_func
+    end interface
 
-  subroutine C3D8_shapefunc_deriv(n_base, local, func)
-    implicit none
-    integer(kint), intent(in) :: n_base
-    real(kdouble), intent(in) :: local(3)
-    real(kdouble), intent(out) :: func(8,3)
+    procedure(shape_func), pointer ::  fptr => null()
 
-    func(1,1) = -0.125d0*(1.0d0-local(2))*(1.0d0-local(3))
-    func(2,1) =  0.125d0*(1.0d0-local(2))*(1.0d0-local(3))
-    func(3,1) =  0.125d0*(1.0d0+local(2))*(1.0d0-local(3))
-    func(4,1) = -0.125d0*(1.0d0+local(2))*(1.0d0-local(3))
-    func(5,1) = -0.125d0*(1.0d0-local(2))*(1.0d0+local(3))
-    func(6,1) =  0.125d0*(1.0d0-local(2))*(1.0d0+local(3))
-    func(7,1) =  0.125d0*(1.0d0+local(2))*(1.0d0+local(3))
-    func(8,1) = -0.125d0*(1.0d0+local(2))*(1.0d0+local(3))
+    call monolis_std_global_log_string("gg_tools_get_distance_3d")
 
-    func(1,2) = -0.125d0*(1.0d0-local(1))*(1.0d0-local(3))
-    func(2,2) = -0.125d0*(1.0d0+local(1))*(1.0d0-local(3))
-    func(3,2) =  0.125d0*(1.0d0+local(1))*(1.0d0-local(3))
-    func(4,2) =  0.125d0*(1.0d0-local(1))*(1.0d0-local(3))
-    func(5,2) = -0.125d0*(1.0d0-local(1))*(1.0d0+local(3))
-    func(6,2) = -0.125d0*(1.0d0+local(1))*(1.0d0+local(3))
-    func(7,2) =  0.125d0*(1.0d0+local(1))*(1.0d0+local(3))
-    func(8,2) =  0.125d0*(1.0d0-local(1))*(1.0d0+local(3))
+    n_base = 8
+    eps = 1.0d-3
+    ths = 1.0d-3
+    ths_up = 1.0d+3
 
-    func(1,3) = -0.125d0*(1.0d0-local(1))*(1.0d0-local(2))
-    func(2,3) = -0.125d0*(1.0d0+local(1))*(1.0d0-local(2))
-    func(3,3) = -0.125d0*(1.0d0+local(1))*(1.0d0+local(2))
-    func(4,3) = -0.125d0*(1.0d0-local(1))*(1.0d0+local(2))
-    func(5,3) =  0.125d0*(1.0d0-local(1))*(1.0d0-local(2))
-    func(6,3) =  0.125d0*(1.0d0+local(1))*(1.0d0-local(2))
-    func(7,3) =  0.125d0*(1.0d0+local(1))*(1.0d0+local(2))
-    func(8,3) =  0.125d0*(1.0d0-local(1))*(1.0d0+local(2))
-  end subroutine C3D8_shapefunc_deriv
+    fptr => C3D8_shapefunc
+
+    coord(1,1) = 0.0d0; coord(2,1) = 0.0d0; coord(3,1) = 0.0d0
+    coord(1,2) = 1.0d0; coord(2,2) = 0.0d0; coord(3,2) = 0.0d0
+    coord(1,3) = 1.0d0; coord(2,3) = 1.0d0; coord(3,3) = 0.0d0
+    coord(1,4) = 0.0d0; coord(2,4) = 1.0d0; coord(3,4) = 0.0d0
+    coord(1,5) = 0.0d0; coord(2,5) = 0.0d0; coord(3,5) = 1.0d0
+    coord(1,6) = 1.0d0; coord(2,6) = 0.0d0; coord(3,6) = 1.0d0
+    coord(1,7) = 1.0d0; coord(2,7) = 1.0d0; coord(3,7) = 1.0d0
+    coord(1,8) = 0.0d0; coord(2,8) = 1.0d0; coord(3,8) = 1.0d0
+
+    !> case 1
+    global_pos(1) = 0.0d0
+    global_pos(2) = 0.0d0
+    global_pos(3) = 0.0d0
+
+    call gg_tools_get_distance_3d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) =-1.0d0
+    ans(2) =-1.0d0
+    ans(3) =-1.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_3d_test 1", local_pos, ans)
+  end subroutine gg_tools_get_distance_3d_test
 
   subroutine get_shapefunc_deriv_3d_test()
     implicit none
@@ -70,11 +80,11 @@ contains
 
     interface
       subroutine shape_func(n_base, local_pos, weight)
-        !>
+        !> 要素を構成する形状関数の個数
         integer(4), intent(in) :: n_base
-        !>
+        !> 入力座標に最も近い局所座標
         real(8), intent(in) :: local_pos(3)
-        !>
+        !> 形状関数の重み
         real(8), intent(out) :: weight(n_base)
       end subroutine shape_func
     end interface
@@ -197,4 +207,53 @@ contains
     call monolis_test_check_eq_R("get_shapefunc_deriv_3d 9c", deriv(:,3), ans(:,3))
   end subroutine get_shapefunc_deriv_3d_test
 
+  subroutine C3D8_shapefunc(n_base, local, func)
+    implicit none
+    integer(kint), intent(in) :: n_base
+    real(kdouble), intent(in) :: local(3)
+    real(kdouble), intent(out) :: func(n_base)
+
+    func(1) = 0.125d0*(1.0d0-local(1))*(1.0d0-local(2))*(1.0d0-local(3))
+    func(2) = 0.125d0*(1.0d0+local(1))*(1.0d0-local(2))*(1.0d0-local(3))
+    func(3) = 0.125d0*(1.0d0+local(1))*(1.0d0+local(2))*(1.0d0-local(3))
+    func(4) = 0.125d0*(1.0d0-local(1))*(1.0d0+local(2))*(1.0d0-local(3))
+    func(5) = 0.125d0*(1.0d0-local(1))*(1.0d0-local(2))*(1.0d0+local(3))
+    func(6) = 0.125d0*(1.0d0+local(1))*(1.0d0-local(2))*(1.0d0+local(3))
+    func(7) = 0.125d0*(1.0d0+local(1))*(1.0d0+local(2))*(1.0d0+local(3))
+    func(8) = 0.125d0*(1.0d0-local(1))*(1.0d0+local(2))*(1.0d0+local(3))
+  end subroutine C3D8_shapefunc
+
+  subroutine C3D8_shapefunc_deriv(n_base, local, func)
+    implicit none
+    integer(kint), intent(in) :: n_base
+    real(kdouble), intent(in) :: local(3)
+    real(kdouble), intent(out) :: func(n_base,3)
+
+    func(1,1) = -0.125d0*(1.0d0-local(2))*(1.0d0-local(3))
+    func(2,1) =  0.125d0*(1.0d0-local(2))*(1.0d0-local(3))
+    func(3,1) =  0.125d0*(1.0d0+local(2))*(1.0d0-local(3))
+    func(4,1) = -0.125d0*(1.0d0+local(2))*(1.0d0-local(3))
+    func(5,1) = -0.125d0*(1.0d0-local(2))*(1.0d0+local(3))
+    func(6,1) =  0.125d0*(1.0d0-local(2))*(1.0d0+local(3))
+    func(7,1) =  0.125d0*(1.0d0+local(2))*(1.0d0+local(3))
+    func(8,1) = -0.125d0*(1.0d0+local(2))*(1.0d0+local(3))
+
+    func(1,2) = -0.125d0*(1.0d0-local(1))*(1.0d0-local(3))
+    func(2,2) = -0.125d0*(1.0d0+local(1))*(1.0d0-local(3))
+    func(3,2) =  0.125d0*(1.0d0+local(1))*(1.0d0-local(3))
+    func(4,2) =  0.125d0*(1.0d0-local(1))*(1.0d0-local(3))
+    func(5,2) = -0.125d0*(1.0d0-local(1))*(1.0d0+local(3))
+    func(6,2) = -0.125d0*(1.0d0+local(1))*(1.0d0+local(3))
+    func(7,2) =  0.125d0*(1.0d0+local(1))*(1.0d0+local(3))
+    func(8,2) =  0.125d0*(1.0d0-local(1))*(1.0d0+local(3))
+
+    func(1,3) = -0.125d0*(1.0d0-local(1))*(1.0d0-local(2))
+    func(2,3) = -0.125d0*(1.0d0+local(1))*(1.0d0-local(2))
+    func(3,3) = -0.125d0*(1.0d0+local(1))*(1.0d0+local(2))
+    func(4,3) = -0.125d0*(1.0d0-local(1))*(1.0d0+local(2))
+    func(5,3) =  0.125d0*(1.0d0-local(1))*(1.0d0-local(2))
+    func(6,3) =  0.125d0*(1.0d0+local(1))*(1.0d0-local(2))
+    func(7,3) =  0.125d0*(1.0d0+local(1))*(1.0d0+local(2))
+    func(8,3) =  0.125d0*(1.0d0-local(1))*(1.0d0+local(2))
+  end subroutine C3D8_shapefunc_deriv
 end module mod_gg_tools_distance_determination_test

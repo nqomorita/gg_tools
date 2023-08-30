@@ -106,7 +106,7 @@ contains
     integer(kint) :: in
     !> 登録する要素領域 id
     integer(kint) :: id
-    integer(kint) :: add(1), nid
+    integer(kint) :: add(1)
 
     add = id
     call monolis_append_I_1d(ggt_bucket_search%cell_3d(in)%id, 1, add)
@@ -157,7 +157,7 @@ contains
     integer(kint) :: nid
     !> 取得情報を保持した整数配列
     integer(kint), allocatable :: id(:)
-    integer(kint) :: morton_id, imin(3), imax(3)
+    integer(kint) :: imin(3), imax(3)
     integer(kint) :: in, x, y, z, newlen
     integer(kint), allocatable :: tmp(:)
     real(kdouble) :: pos(3), ths
@@ -249,8 +249,7 @@ contains
     real(kdouble) :: BB_in(6)
     !> 内包フラグ
     logical :: is_in
-    real(kdouble) :: pos(3), BB(6)
-    integer(kint) :: i
+    real(kdouble) :: BB(6)
 
     is_in = .true.
     BB = ggt_bucket_search%BB

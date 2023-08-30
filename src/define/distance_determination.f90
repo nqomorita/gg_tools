@@ -31,11 +31,11 @@ contains
 
     interface
       subroutine shape_func(n_base, local_pos, weight)
-        !>
+        !> 要素を構成する形状関数の個数
         integer(4), intent(in) :: n_base
-        !>
+        !> 入力座標に最も近い局所座標
         real(8), intent(in) :: local_pos(3)
-        !>
+        !> 形状関数の重み
         real(8), intent(out) :: weight(n_base)
       end subroutine shape_func
     end interface
@@ -93,11 +93,11 @@ contains
 
     interface
       subroutine shape_func(n_base, local_pos, weight)
-        !>
+        !> 要素を構成する形状関数の個数
         integer(4), intent(in) :: n_base
-        !>
+        !> 入力座標に最も近い局所座標
         real(8), intent(in) :: local_pos(3)
-        !>
+        !> 形状関数の重み
         real(8), intent(out) :: weight(n_base)
       end subroutine shape_func
     end interface
