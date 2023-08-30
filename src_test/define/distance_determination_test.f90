@@ -98,6 +98,58 @@ contains
     ans(3) = 0.0d0
 
     call monolis_test_check_eq_R("gg_tools_get_distance_3d_test 3", local_pos, ans)
+
+    !> pattern 2
+    coord(1,1) = 0.0d0; coord(2,1) = 0.0d0; coord(3,1) = 0.0d0
+    coord(1,2) = 1.0d0; coord(2,2) = 0.0d0; coord(3,2) = 0.0d0
+    coord(1,3) = 1.0d0; coord(2,3) = 1.0d0; coord(3,3) = 0.0d0
+    coord(1,4) = 0.0d0; coord(2,4) = 1.0d0; coord(3,4) = 0.0d0
+    coord(1,5) = 1.0d0; coord(2,5) = 0.0d0; coord(3,5) = 1.0d0
+    coord(1,6) = 2.0d0; coord(2,6) = 0.0d0; coord(3,6) = 1.0d0
+    coord(1,7) = 1.0d0; coord(2,7) = 1.0d0; coord(3,7) = 1.0d0
+    coord(1,8) = 0.0d0; coord(2,8) = 1.0d0; coord(3,8) = 1.0d0
+
+    !> case 4
+    global_pos(1) = 0.0d0
+    global_pos(2) = 0.0d0
+    global_pos(3) = 0.0d0
+
+    call gg_tools_get_distance_3d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) =-1.0d0
+    ans(2) =-1.0d0
+    ans(3) =-1.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_3d_test 4", local_pos, ans)
+
+    !> case 5
+    global_pos(1) = 1.0d0
+    global_pos(2) = 1.0d0
+    global_pos(3) = 1.0d0
+
+    call gg_tools_get_distance_3d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) = 1.0d0
+    ans(2) = 1.0d0
+    ans(3) = 1.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_3d_test 5", local_pos, ans)
+
+    !> case 6
+    global_pos(1) = 0.5d0
+    global_pos(2) = 0.5d0
+    global_pos(3) = 0.5d0
+
+    call gg_tools_get_distance_3d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) =-0.5d0
+    ans(2) = 0.0d0
+    ans(3) = 0.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_3d_test 6", local_pos, ans)
   end subroutine gg_tools_get_distance_3d_test
 
   subroutine get_shapefunc_deriv_3d_test()
