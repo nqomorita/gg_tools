@@ -40,7 +40,7 @@ contains
       end subroutine shape_func
     end interface
 
-    integer(kint) :: i, j
+    integer(kint) :: i
     real(kdouble) :: tangent(3,2), invJacob(2,2), det
     real(kdouble) :: norm, n(n_base), deriv(n_base,2), r(3), dr(2), dF(2), d2F(2,2)
     logical :: is_fail
@@ -115,7 +115,7 @@ contains
       end subroutine shape_func
     end interface
 
-    integer(kint) :: i, j
+    integer(kint) :: i
     real(kdouble) :: jacobi(3,3), invJacob(3,3), det
     real(kdouble) :: norm, n(n_base), deriv(n_base,3), r(3), dr(3)
     logical :: is_fail

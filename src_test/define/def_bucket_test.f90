@@ -44,7 +44,57 @@ contains
 
   subroutine gg_tools_bucket_search_test()
     implicit none
-    call monolis_std_log_string("")
+    type(type_gg_tools_bucket_search) :: ggt_bucket_search
+    integer(kint) :: n_div(3), id, nid
+    real(kdouble) :: BB(6)
+    real(kdouble) :: pos(3)
+    integer(kint), allocatable :: id_get(:)
+
+    call monolis_std_log_string("gg_tools_bucket_search_push")
+    call monolis_std_log_string("gg_tools_bucket_search_get_by_position")
+
+    BB(1) = 0.0d0
+    BB(2) = 1.0d0
+    BB(3) = 0.0d0
+    BB(4) = 1.0d0
+    BB(5) = 0.0d0
+    BB(6) = 1.0d0
+
+    n_div(1) = 3
+    n_div(2) = 3
+    n_div(3) = 3
+
+    call gg_tools_bucket_search_init(ggt_bucket_search, BB, n_div)
+
+    BB(1) = 0.0d0
+    BB(2) = 0.5d0
+    BB(3) = 0.0d0
+    BB(4) = 0.5d0
+    BB(5) = 0.0d0
+    BB(6) = 0.5d0
+    id = 1
+    call gg_tools_bucket_search_push(ggt_bucket_search, BB, id)
+
+    BB(1) = 0.0d0
+    BB(2) = 0.1d0
+    BB(3) = 0.0d0
+    BB(4) = 0.1d0
+    BB(5) = 0.0d0
+    BB(6) = 0.1d0
+    id = 2
+    call gg_tools_bucket_search_push(ggt_bucket_search, BB, id)
+
+    pos(1) = 0.2d0
+    pos(2) = 0.2d0
+    pos(3) = 0.2d0
+    call gg_tools_bucket_search_get_by_position(ggt_bucket_search, pos, nid, id_get)
+
+    pos(1) = 0.5d0
+    pos(2) = 0.5d0
+    pos(3) = 0.5d0
+    call gg_tools_bucket_search_get_by_position(ggt_bucket_search, pos, nid, id_get)
+
+    call gg_tools_bucket_search_finalize(ggt_bucket_search)
   end subroutine gg_tools_bucket_search_test
 
   !> temporary monolis_utils test

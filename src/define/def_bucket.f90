@@ -125,7 +125,7 @@ contains
     integer(kint) :: nid
     !> 取得情報を保持した整数配列
     integer(kint), allocatable :: id(:)
-    integer(kint) :: in
+    integer(kint) :: in, tmp(3)
     logical :: is_in
 
     nid = 0
@@ -134,8 +134,8 @@ contains
     call BB_check(ggt_bucket_search, pos, is_in)
     if(.not. is_in) return
 
-    call get_int_coordinate(ggt_bucket_search, pos, id)
-    in = get_index(ggt_bucket_search%n_div, id(1), id(2), id(3))
+    call get_int_coordinate(ggt_bucket_search, pos, tmp)
+    in = get_index(ggt_bucket_search%n_div, tmp(1), tmp(2), tmp(3))
 
     nid = ggt_bucket_search%cell_3d(in)%nid
 
