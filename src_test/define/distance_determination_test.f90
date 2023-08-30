@@ -70,6 +70,34 @@ contains
     ans(3) =-1.0d0
 
     call monolis_test_check_eq_R("gg_tools_get_distance_3d_test 1", local_pos, ans)
+
+    !> case 2
+    global_pos(1) = 1.0d0
+    global_pos(2) = 1.0d0
+    global_pos(3) = 1.0d0
+
+    call gg_tools_get_distance_3d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) = 1.0d0
+    ans(2) = 1.0d0
+    ans(3) = 1.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_3d_test 2", local_pos, ans)
+
+    !> case 3
+    global_pos(1) = 0.5d0
+    global_pos(2) = 0.5d0
+    global_pos(3) = 0.5d0
+
+    call gg_tools_get_distance_3d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) = 0.0d0
+    ans(2) = 0.0d0
+    ans(3) = 0.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_3d_test 3", local_pos, ans)
   end subroutine gg_tools_get_distance_3d_test
 
   subroutine get_shapefunc_deriv_3d_test()
