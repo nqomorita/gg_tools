@@ -6,11 +6,17 @@ module mod_gg_tools_distance_determination_test
 
 contains
 
+  subroutine gg_tools_distance_determination_test()
+    implicit none
+
+    call get_shapefunc_deriv_3d_test()
+  end subroutine gg_tools_distance_determination_test
+
   subroutine C3D8_shapefunc(n_base, local, func)
     implicit none
-    integer(4), intent(in) :: n_base
-    real(8), intent(in) :: local(3)
-    real(8), intent(out) :: func(n_base)
+    integer(kint), intent(in) :: n_base
+    real(kdouble), intent(in) :: local(3)
+    real(kdouble), intent(out) :: func(n_base)
 
     func(1) = 0.125d0*(1.0d0-local(1))*(1.0d0-local(2))*(1.0d0-local(3))
     func(2) = 0.125d0*(1.0d0+local(1))*(1.0d0-local(2))*(1.0d0-local(3))
@@ -56,7 +62,7 @@ contains
     func(8,3) =  0.125d0*(1.0d0-local(1))*(1.0d0+local(2))
   end subroutine C3D8_shapefunc_deriv
 
-  subroutine gg_tools_distance_determination_test()
+  subroutine get_shapefunc_deriv_3d_test()
     implicit none
     integer(kint) :: n_base
     real(kdouble) :: local_pos(3), eps
@@ -75,20 +81,120 @@ contains
 
     procedure(shape_func), pointer ::  fptr => null()
 
+    call monolis_std_global_log_string("get_shapefunc_deriv_3d")
+
     n_base = 8
-    local_pos(1) = 0.0d0
-    local_pos(2) = 0.0d0
-    local_pos(3) = 0.0d0
     eps = 1.0d-3
 
     fptr => C3D8_shapefunc
-    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
 
+    !> case 1
+    local_pos(1) = 0.0d0
+    local_pos(2) = 0.0d0
+    local_pos(3) = 0.0d0
+
+    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
     call C3D8_shapefunc_deriv(n_base, local_pos, ans)
 
-    write(*,*)"ans"
-    write(*,"(1p8e12.4)")deriv(:,1)
-    write(*,"(1p8e12.4)")ans(:,1)
-  end subroutine gg_tools_distance_determination_test
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 1a", deriv(:,1), ans(:,1))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 1b", deriv(:,2), ans(:,2))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 1c", deriv(:,3), ans(:,3))
+
+    !> case 2
+    local_pos(1) =-0.5d0
+    local_pos(2) =-0.5d0
+    local_pos(3) =-0.5d0
+
+    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
+    call C3D8_shapefunc_deriv(n_base, local_pos, ans)
+
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 2a", deriv(:,1), ans(:,1))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 2b", deriv(:,2), ans(:,2))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 2c", deriv(:,3), ans(:,3))
+
+    !> case 3
+    local_pos(1) = 0.5d0
+    local_pos(2) =-0.5d0
+    local_pos(3) =-0.5d0
+
+    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
+    call C3D8_shapefunc_deriv(n_base, local_pos, ans)
+
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 3a", deriv(:,1), ans(:,1))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 3b", deriv(:,2), ans(:,2))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 3c", deriv(:,3), ans(:,3))
+
+    !> case 4
+    local_pos(1) = 0.5d0
+    local_pos(2) = 0.5d0
+    local_pos(3) =-0.5d0
+
+    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
+    call C3D8_shapefunc_deriv(n_base, local_pos, ans)
+
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 4a", deriv(:,1), ans(:,1))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 4b", deriv(:,2), ans(:,2))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 4c", deriv(:,3), ans(:,3))
+
+    !> case 5
+    local_pos(1) =-0.5d0
+    local_pos(2) = 0.5d0
+    local_pos(3) =-0.5d0
+
+    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
+    call C3D8_shapefunc_deriv(n_base, local_pos, ans)
+
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 5a", deriv(:,1), ans(:,1))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 5b", deriv(:,2), ans(:,2))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 5c", deriv(:,3), ans(:,3))
+
+    !> case 6
+    local_pos(1) =-0.5d0
+    local_pos(2) =-0.5d0
+    local_pos(3) = 0.5d0
+
+    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
+    call C3D8_shapefunc_deriv(n_base, local_pos, ans)
+
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 6a", deriv(:,1), ans(:,1))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 6b", deriv(:,2), ans(:,2))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 6c", deriv(:,3), ans(:,3))
+
+    !> case 7
+    local_pos(1) = 0.5d0
+    local_pos(2) =-0.5d0
+    local_pos(3) = 0.5d0
+
+    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
+    call C3D8_shapefunc_deriv(n_base, local_pos, ans)
+
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 7a", deriv(:,1), ans(:,1))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 7b", deriv(:,2), ans(:,2))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 7c", deriv(:,3), ans(:,3))
+
+    !> case 8
+    local_pos(1) = 0.5d0
+    local_pos(2) = 0.5d0
+    local_pos(3) = 0.5d0
+
+    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
+    call C3D8_shapefunc_deriv(n_base, local_pos, ans)
+
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 8a", deriv(:,1), ans(:,1))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 8b", deriv(:,2), ans(:,2))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 8c", deriv(:,3), ans(:,3))
+
+    !> case 9
+    local_pos(1) =-0.5d0
+    local_pos(2) = 0.5d0
+    local_pos(3) = 0.5d0
+
+    call get_shapefunc_deriv_3d(n_base, fptr, local_pos, eps, deriv)
+    call C3D8_shapefunc_deriv(n_base, local_pos, ans)
+
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 9a", deriv(:,1), ans(:,1))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 9b", deriv(:,2), ans(:,2))
+    call monolis_test_check_eq_R("get_shapefunc_deriv_3d 9c", deriv(:,3), ans(:,3))
+  end subroutine get_shapefunc_deriv_3d_test
 
 end module mod_gg_tools_distance_determination_test
