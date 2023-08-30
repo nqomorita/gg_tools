@@ -89,10 +89,17 @@ contains
     pos(3) = 0.2d0
     call gg_tools_bucket_search_get_by_position(ggt_bucket_search, pos, nid, id_get)
 
+    call monolis_test_check_eq_I1("gg_tools_bucket_search_test 1a", nid, 2)
+    call monolis_test_check_eq_I1("gg_tools_bucket_search_test 1b", id_get(1), 1)
+    call monolis_test_check_eq_I1("gg_tools_bucket_search_test 1c", id_get(2), 2)
+
     pos(1) = 0.5d0
     pos(2) = 0.5d0
     pos(3) = 0.5d0
     call gg_tools_bucket_search_get_by_position(ggt_bucket_search, pos, nid, id_get)
+
+    call monolis_test_check_eq_I1("gg_tools_bucket_search_test 2a", nid, 1)
+    call monolis_test_check_eq_I1("gg_tools_bucket_search_test 2b", id_get(1), 1)
 
     call gg_tools_bucket_search_finalize(ggt_bucket_search)
   end subroutine gg_tools_bucket_search_test
