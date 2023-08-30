@@ -20,7 +20,26 @@ contains
 
   subroutine gg_tools_bucket_initialize_test()
     implicit none
-    call monolis_std_log_string("")
+    type(type_gg_tools_bucket_search) :: ggt_bucket_search
+    real(kdouble) :: BB(6)
+    integer(kint) :: n_div(3)
+
+    call monolis_std_log_string("gg_tools_bucket_search_init")
+    call monolis_std_log_string("gg_tools_bucket_search_finalize")
+
+    BB(1) = 0.0d0
+    BB(2) = 1.0d0
+    BB(3) = 0.0d0
+    BB(4) = 1.0d0
+    BB(5) = 0.0d0
+    BB(6) = 1.0d0
+
+    n_div(1) = 10
+    n_div(2) = 10
+    n_div(3) = 10
+
+    call gg_tools_bucket_search_init(ggt_bucket_search, BB, n_div)
+    call gg_tools_bucket_search_finalize(ggt_bucket_search)
   end subroutine gg_tools_bucket_initialize_test
 
   subroutine gg_tools_bucket_search_test()
@@ -28,7 +47,7 @@ contains
     call monolis_std_log_string("")
   end subroutine gg_tools_bucket_search_test
 
-!> temporary monolis_utils test
+  !> temporary monolis_utils test
   subroutine monolis_utils_aabb_test()
     implicit none
 

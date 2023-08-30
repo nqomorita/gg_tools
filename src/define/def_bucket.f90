@@ -38,10 +38,10 @@ contains
     implicit none
     !> バケット検索構造体
     type(type_gg_tools_bucket_search) :: ggt_bucket_search
-    !> バケットの分割数（nx, ny, nz）
-    integer(kint) :: n_div(3)
     !> 検索領域を定義するバウンダリボックス（xmin, xmax, ymin, ymax, zmin, zmax）
     real(kdouble) :: BB(6)
+    !> バケットの分割数（nx, ny, nz）
+    integer(kint) :: n_div(3)
     integer(kint) :: n_all
     real(kdouble) :: minbb
 
@@ -63,7 +63,7 @@ contains
 
   !> @ingroup bucket
   !> バケットへの情報登録
-  subroutine gg_tools_neighbor_search_push(ggt_bucket_search, BB, id)
+  subroutine gg_tools_bucket_search_push(ggt_bucket_search, BB, id)
     implicit none
     !> バケット検索構造体
     type(type_gg_tools_bucket_search) :: ggt_bucket_search
@@ -90,15 +90,15 @@ contains
     do y = imin(2), imax(2)
     do x = imin(1), imax(1)
       in = get_index(ggt_bucket_search%n_div, x, y, z)
-      call gg_tools_neighbor_search_push_main(ggt_bucket_search, in, id)
+      call gg_tools_bucket_search_push_main(ggt_bucket_search, in, id)
     enddo
     enddo
     enddo
-  end subroutine gg_tools_neighbor_search_push
+  end subroutine gg_tools_bucket_search_push
 
   !> @ingroup dev
   !> バケットへの情報登録（メイン関数）
-  subroutine gg_tools_neighbor_search_push_main(ggt_bucket_search, in, id)
+  subroutine gg_tools_bucket_search_push_main(ggt_bucket_search, in, id)
     implicit none
     !> バケット検索構造体
     type(type_gg_tools_bucket_search) :: ggt_bucket_search
@@ -111,11 +111,11 @@ contains
     add = id
     call monolis_append_I_1d(ggt_bucket_search%cell_3d(in)%id, 1, add)
     ggt_bucket_search%cell_3d(in)%nid = ggt_bucket_search%cell_3d(in)%nid + 1
-  end subroutine gg_tools_neighbor_search_push_main
+  end subroutine gg_tools_bucket_search_push_main
 
   !> @ingroup bucket
   !> バケットから登録情報の取得（座標を入力）
-  subroutine gg_tools_neighbor_search_get_by_position(ggt_bucket_search, pos, nid, id)
+  subroutine gg_tools_bucket_search_get_by_position(ggt_bucket_search, pos, nid, id)
     implicit none
     !> バケット検索構造体
     type(type_gg_tools_bucket_search) :: ggt_bucket_search
@@ -143,11 +143,11 @@ contains
       call monolis_alloc_I_1d(id, nid)
       id = ggt_bucket_search%cell_3d(in)%id
     endif
-  end subroutine gg_tools_neighbor_search_get_by_position
+  end subroutine gg_tools_bucket_search_get_by_position
 
   !> @ingroup bucket
   !> バケットから登録情報の取得（バウンダリボックスを入力）
-  subroutine gg_tools_neighbor_search_get_by_bb(ggt_bucket_search, BB, nid, id)
+  subroutine gg_tools_bucket_search_get_by_bb(ggt_bucket_search, BB, nid, id)
     implicit none
     !> バケット検索構造体
     type(type_gg_tools_bucket_search) :: ggt_bucket_search
@@ -202,11 +202,11 @@ contains
     id = tmp(1:newlen)
     call monolis_dealloc_I_1d(tmp)
     nid = newlen
-  end subroutine gg_tools_neighbor_search_get_by_bb
+  end subroutine gg_tools_bucket_search_get_by_bb
 
   !> @ingroup bucket
   !> バケット情報の終了処理
-  subroutine gg_tools_neighbor_search_finalize(ggt_bucket_search)
+  subroutine gg_tools_bucket_search_finalize(ggt_bucket_search)
     implicit none
     !> バケット検索構造体
     type(type_gg_tools_bucket_search) :: ggt_bucket_search
@@ -214,7 +214,7 @@ contains
     deallocate(ggt_bucket_search%cell_1d)
     deallocate(ggt_bucket_search%cell_2d)
     deallocate(ggt_bucket_search%cell_3d)
-  end subroutine gg_tools_neighbor_search_finalize
+  end subroutine gg_tools_bucket_search_finalize
 
   !> @ingroup dev
   !> 入力座標とバウンディングボックスの内包判定
