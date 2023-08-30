@@ -11,7 +11,133 @@ contains
 
     call get_shapefunc_deriv_3d_test()
     call gg_tools_get_distance_3d_test()
+    call gg_tools_get_distance_2d_test()
   end subroutine gg_tools_distance_determination_test
+
+  subroutine gg_tools_get_distance_2d_test()
+    implicit none
+    integer(kint) :: n_base
+    real(kdouble) :: coord(3,4)
+    pointer :: shape_func
+    real(kdouble) :: global_pos(3)
+    real(kdouble) :: local_pos(2)
+    real(kdouble) :: ths
+    real(kdouble) :: ths_up
+    real(kdouble) :: eps
+    real(kdouble) :: ans(2)
+    logical :: is_converge
+
+    interface
+      subroutine shape_func(n_base, local_pos, weight)
+        !> 要素を構成する形状関数の個数
+        integer(4), intent(in) :: n_base
+        !> 入力座標に最も近い局所座標
+        real(8), intent(in) :: local_pos(2)
+        !> 形状関数の重み
+        real(8), intent(out) :: weight(n_base)
+      end subroutine shape_func
+    end interface
+
+    procedure(shape_func), pointer ::  fptr => null()
+
+    call monolis_std_global_log_string("gg_tools_get_distance_2d")
+
+    n_base = 4
+    eps = 1.0d-3
+    ths = 1.0d-3
+    ths_up = 1.0d+3
+
+    fptr => C2D4_shapefunc
+
+    coord(1,1) = 0.0d0; coord(2,1) = 0.0d0; coord(3,1) = 0.0d0
+    coord(1,2) = 1.0d0; coord(2,2) = 0.0d0; coord(3,2) = 0.0d0
+    coord(1,3) = 1.0d0; coord(2,3) = 1.0d0; coord(3,3) = 0.0d0
+    coord(1,4) = 0.0d0; coord(2,4) = 1.0d0; coord(3,4) = 0.0d0
+
+    !> case 1
+    global_pos(1) = 0.0d0
+    global_pos(2) = 0.0d0
+    global_pos(3) = 0.0d0
+
+    call gg_tools_get_distance_2d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) =-1.0d0
+    ans(2) =-1.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_2d_test 1", local_pos, ans)
+
+    !> case 2
+    global_pos(1) = 1.0d0
+    global_pos(2) = 1.0d0
+    global_pos(3) = 1.0d0
+
+    call gg_tools_get_distance_2d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) = 1.0d0
+    ans(2) = 1.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_2d_test 2", local_pos, ans)
+
+    !> case 3
+    global_pos(1) = 0.5d0
+    global_pos(2) = 0.5d0
+    global_pos(3) = 0.5d0
+
+    call gg_tools_get_distance_2d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) = 0.0d0
+    ans(2) = 0.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_2d_test 3", local_pos, ans)
+
+    !> pattern 2
+    coord(1,1) = 0.0d0; coord(2,1) = 0.0d0; coord(3,1) = 0.0d0
+    coord(1,2) = 1.0d0; coord(2,2) = 0.0d0; coord(3,2) = 0.0d0
+    coord(1,3) = 1.0d0; coord(2,3) = 1.0d0; coord(3,3) = 0.0d0
+    coord(1,4) = 0.0d0; coord(2,4) = 1.0d0; coord(3,4) = 0.0d0
+
+    !> case 4
+    global_pos(1) = 0.0d0
+    global_pos(2) = 0.0d0
+    global_pos(3) = 0.0d0
+
+    call gg_tools_get_distance_2d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) =-1.0d0
+    ans(2) =-1.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_2d_test 4", local_pos, ans)
+
+    !> case 5
+    global_pos(1) = 1.0d0
+    global_pos(2) = 1.0d0
+    global_pos(3) = 1.0d0
+
+    call gg_tools_get_distance_2d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) = 1.0d0
+    ans(2) = 1.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_2d_test 5", local_pos, ans)
+
+    !> case 6
+    global_pos(1) = 0.5d0
+    global_pos(2) = 0.5d0
+    global_pos(3) = 0.5d0
+
+    call gg_tools_get_distance_2d(n_base, coord, fptr, &
+      & global_pos, local_pos, ths, ths_up, eps, is_converge)
+
+    ans(1) = 0.0d0
+    ans(2) = 0.0d0
+
+    call monolis_test_check_eq_R("gg_tools_get_distance_2d_test 6", local_pos, ans)
+  end subroutine gg_tools_get_distance_2d_test
 
   subroutine gg_tools_get_distance_3d_test()
     implicit none
@@ -286,6 +412,35 @@ contains
     call monolis_test_check_eq_R("get_shapefunc_deriv_3d 9b", deriv(:,2), ans(:,2))
     call monolis_test_check_eq_R("get_shapefunc_deriv_3d 9c", deriv(:,3), ans(:,3))
   end subroutine get_shapefunc_deriv_3d_test
+
+  subroutine C2D4_shapefunc(n_base, local, func)
+    implicit none
+    integer(kint), intent(in) :: n_base
+    real(kdouble), intent(in) :: local(2)
+    real(kdouble), intent(out) :: func(n_base)
+
+    func(1) = 0.25d0*(1.0d0-local(1))*(1.0d0-local(2))
+    func(2) = 0.25d0*(1.0d0+local(1))*(1.0d0-local(2))
+    func(3) = 0.25d0*(1.0d0+local(1))*(1.0d0+local(2))
+    func(4) = 0.25d0*(1.0d0-local(1))*(1.0d0+local(2))
+  end subroutine C2D4_shapefunc
+
+  subroutine C2D4_shapefunc_deriv(n_base, local, func)
+    implicit none
+    integer(kint), intent(in) :: n_base
+    real(kdouble), intent(in) :: local(2)
+    real(kdouble), intent(out) :: func(n_base,2)
+
+    func(1,1) = -0.25d0*(1.0d0-local(2))
+    func(2,1) =  0.25d0*(1.0d0-local(2))
+    func(3,1) =  0.25d0*(1.0d0+local(2))
+    func(4,1) = -0.25d0*(1.0d0+local(2))
+
+    func(1,2) = -0.25d0*(1.0d0-local(1))
+    func(2,2) = -0.25d0*(1.0d0+local(1))
+    func(3,2) =  0.25d0*(1.0d0+local(1))
+    func(4,2) =  0.25d0*(1.0d0-local(1))
+  end subroutine C2D4_shapefunc_deriv
 
   subroutine C3D8_shapefunc(n_base, local, func)
     implicit none
