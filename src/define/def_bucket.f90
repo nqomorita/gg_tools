@@ -41,6 +41,14 @@ contains
     real(kdouble) :: xmax(3)
     !> バケットセルサイズ（dx, dy, dz）
     real(kdouble) :: dx(3)
+
+    ggtools_bucket%xmin = xmin
+    ggtools_bucket%xmax = xmax
+    ggtools_bucket%dx = dx
+
+    ggtools_bucket%nx(1) = 1
+    ggtools_bucket%nx(2) = 2
+    ggtools_bucket%nx(3) = 3
   end subroutine ggtools_bucket_init
 
   !> @ingroup bucket
@@ -55,6 +63,14 @@ contains
     real(kdouble) :: xmax(3)
     !> バケットセル分割数（nx, ny, nz）
     integer(kint) :: nx(3)
+
+    ggtools_bucket%xmin = xmin
+    ggtools_bucket%xmax = xmax
+    ggtools_bucket%nx = nx
+
+    ggtools_bucket%dx(1) = 1.0d0
+    ggtools_bucket%dx(2) = 2.0d0
+    ggtools_bucket%dx(3) = 3.0d0
   end subroutine ggtools_bucket_init_by_nx
 
   !> @ingroup bucket
@@ -63,6 +79,11 @@ contains
     implicit none
     !> バケット構造体
     type(type_ggtools_bucket) :: ggtools_bucket
+
+    ggtools_bucket%xmin = 0.0d0
+    ggtools_bucket%xmax = 0.0d0
+    ggtools_bucket%dx = 0.0d0
+    ggtools_bucket%nx = 0
   end subroutine
 
   !> @ingroup bucket
@@ -70,9 +91,13 @@ contains
   subroutine ggtools_bucket_cell_init(ggtools_bucket_cell, nx)
     implicit none
     !> バケットセル構造体
-    type(type_ggtools_bucket_cell) :: ggtools_bucket_cell(:)
+    type(type_ggtools_bucket_cell), allocatable :: ggtools_bucket_cell(:)
     !> バケットセル分割数（nx, ny, nz）
     integer(kint) :: nx(3)
+    integer(kint) :: n_total
+
+    n_total = nx(1)*nx(2)*nx(3)
+    allocate(ggtools_bucket_cell(n_total))
   end subroutine
 
   !> @ingroup bucket
@@ -81,6 +106,12 @@ contains
     implicit none
     !> バケットセル構造体
     type(type_ggtools_bucket_cell) :: ggtools_bucket_cell(:)
+    integer(kint) :: i
+
+    do i = 1, size(ggtools_bucket_cell)
+      if(ggtools_bucket_cell(i)%nid == 0) cycle
+      deallocate(ggtools_bucket_cell(i)%id)
+    enddo
   end subroutine
 
   !> @ingroup bucket
@@ -112,6 +143,21 @@ contains
     !> バケットセルに登録する id
     integer(kint) :: id
   end subroutine
+
+  !> @ingroup dev
+  !> バケットへの情報登録（メイン関数）
+  subroutine ggtools_bucket_set_id_main(ggtools_bucket_cell, data)
+    implicit none
+    !> バケット検索構造体
+    type(type_ggtools_bucket_cell) :: ggtools_bucket_cell
+    !> 登録する要素領域 id
+    integer(kint) :: data
+    integer(kint) :: add(1)
+
+    add = data
+    call monolis_append_I_1d(ggtools_bucket_cell%id, 1, add)
+    ggtools_bucket_cell%nid = ggtools_bucket_cell%nid + 1
+  end subroutine ggtools_bucket_set_id_main
 
   !> @ingroup bucket
   !> 入力した座標を内包するバケットセルから、nid 個の整数配列 id_array を取得する関数
@@ -152,6 +198,28 @@ contains
     !n_id_i, id_array_i から重複削除し、n_id, id_array を計算
   end subroutine
 
+  !> @ingroup dev
+  !> バケットセル整数座標の取得
+  subroutine ggtools_bucket_get_int_coordinate(ggtools_bucket, pos, id)
+    implicit none
+    !> バケット検索構造体
+    type(type_ggtools_bucket) :: ggtools_bucket
+    !> 入力座標
+    real(kdouble) :: pos(3)
+    !> バケットセル整数座標
+    integer(kint) :: id(3)
+
+    id(1) = int((pos(1) - ggtools_bucket%xmin(1))/ggtools_bucket%dx(1)) + 1
+    id(2) = int((pos(2) - ggtools_bucket%xmin(2))/ggtools_bucket%dx(2)) + 1
+    id(3) = int((pos(3) - ggtools_bucket%xmin(3))/ggtools_bucket%dx(3)) + 1
+    if(id(1) < 1) id(1) = 1
+    if(id(2) < 1) id(2) = 1
+    if(id(3) < 1) id(3) = 1
+    if(id(1) > ggtools_bucket%nx(1)) id(1) = ggtools_bucket%nx(1)
+    if(id(2) > ggtools_bucket%nx(2)) id(2) = ggtools_bucket%nx(2)
+    if(id(3) > ggtools_bucket%nx(3)) id(3) = ggtools_bucket%nx(3)
+  end subroutine ggtools_bucket_get_int_coordinate
+
   !> @ingroup bucket
   !> バケットサイズを取得
   subroutine ggtools_bucket_get_bucket_size(ggtools_bucket, xmin, xmax)
@@ -162,6 +230,8 @@ contains
     real(kdouble) :: xmin(3)
     !> バウンダリボックスの最大座標
     real(kdouble) :: xmax(3)
+    xmin = ggtools_bucket%xmin
+    xmax = ggtools_bucket%xmax
   end subroutine ggtools_bucket_get_bucket_size
 
   !> @ingroup bucket
@@ -172,6 +242,7 @@ contains
     type(type_ggtools_bucket) :: ggtools_bucket
     !> バケットセル分割数（nx, ny, nz）
     integer(kint) :: nx(3)
+    nx = ggtools_bucket%nx
   end subroutine ggtools_bucket_get_number_of_bucket_divisions
 
   !> @ingroup bucket
@@ -182,5 +253,6 @@ contains
     type(type_ggtools_bucket) :: ggtools_bucket
     !> バケットセルサイズ（dx, dy, dz）
     real(kdouble) :: dx(3)
+    dx = ggtools_bucket%dx
   end subroutine ggtools_bucket_get_bucket_cell_size
 end module mod_ggtools_def_bucket
