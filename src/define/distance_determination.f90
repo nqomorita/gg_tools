@@ -5,4 +5,8 @@ module mod_ggtools_distance_determination
 
 contains
 
+  subroutine dummy()
+    implicit none
+  end subroutine dummy
+
 end module mod_ggtools_distance_determination

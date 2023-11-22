@@ -29,6 +29,8 @@ contains
 
   !> @ingroup bucket
   !> バケットの初期化処理（バケットセルサイズを入力）
+  !> @details バウンダリボックスの最小座標 xmin を起点に、バウンディングボックスを覆う最小のバケットセルを確保する。
+  !> @details バケットセル確保後に、バウンダリボックスの最大座標 xmax が更新される。
   subroutine ggtools_bucket_init(ggtools_bucket, xmin, xmax, dx)
     implicit none
     !> バケット構造体
