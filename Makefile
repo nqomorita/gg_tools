@@ -1,7 +1,7 @@
-#> gg_tools Makefile
+#> ggtools Makefile
 
 ##> compiler setting
-FC     = mpif90
+FC     = mpif90 -Wl,-ld_classic
 FFLAGS = -fPIC -O2 -mtune=native -march=native -std=legacy -Wno-missing-include-dirs
 CC     = mpicc
 CFLAGS = -fPIC -O2
@@ -9,7 +9,7 @@ CFLAGS = -fPIC -O2
 ##> directory setting
 MOD_DIR = -J ./include
 INCLUDE = -I /usr/include -I ./include -I ./submodule/monolis_utils/include
-USE_LIB = -L./lib -lgg_tools -L./submodule/monolis_utils/lib -lmonolis_utils
+USE_LIB = -L./lib -lggtools -L./submodule/monolis_utils/lib -lmonolis_utils
 BIN_DIR = ./bin
 SRC_DIR = ./src
 TST_DIR = ./src_test
@@ -18,7 +18,7 @@ LIB_DIR = ./lib
 WRAP_DIR= ./wrapper
 TST_WRAP_DIR = ./wrapper_test
 DRV_DIR = ./driver
-LIBRARY = libgg_tools.a
+LIBRARY = libggtools.a
 CPP     = -cpp $(FLAG_DEBUG)
 
 ##> option setting
@@ -43,7 +43,7 @@ ifdef FLAGS
 
 	ifeq ($(findstring SUBMODULE, $(DFLAGS)), SUBMODULE)
 		INCLUDE = -I /usr/include -I ./include -I ../monolis_utils/include -I ../../include
-		USE_LIB = -L./lib -lgg_tools -L../monolis_utils/lib -lmonolis_utils
+		USE_LIB = -L./lib -lggtools -L../monolis_utils/lib -lmonolis_utils
 	endif
 endif
 
@@ -77,23 +77,23 @@ $(addprefix define/, $(SRC_DEF))
 LIB_SOURCES = \
 $(addprefix $(SRC_DIR)/,  $(SRC_ALL)) \
 $(addprefix $(WRAP_DIR)/, $(SRC_ALL_C)) \
-./src/gg_tools.f90
+./src/ggtools.f90
 LIB_OBJSt   = $(subst $(SRC_DIR), $(OBJ_DIR), $(LIB_SOURCES:.f90=.o))
 LIB_OBJS    = $(subst $(WRAP_DIR), $(OBJ_DIR), $(LIB_OBJSt:.c=.o))
 
 ##> **********
 ##> target (2) test for fotran
-TEST_TARGET = $(TST_DIR)/gg_tools_test
+TEST_TARGET = $(TST_DIR)/ggtools_test
 
 ##> lib objs
-TST_SRC_ALL = $(SRC_ALL) gg_tools.f90
+TST_SRC_ALL = $(SRC_ALL) ggtools.f90
 TST_SOURCES = $(addprefix $(TST_DIR)/, $(TST_SRC_ALL))
 TST_OBJSt   = $(subst $(TST_DIR), $(OBJ_DIR), $(TST_SOURCES:.f90=_test.o))
 TST_OBJS    = $(TST_OBJSt:.c=_test.o)
 
 ##> **********
 ##> target (3) test for fotran
-TEST_C_TARGET = $(TST_WRAP_DIR)/gg_tools_c_test
+TEST_C_TARGET = $(TST_WRAP_DIR)/ggtools_c_test
 
 ##> lib objs
 #SRC_GRAPH_C_TEST =
@@ -101,7 +101,7 @@ TEST_C_TARGET = $(TST_WRAP_DIR)/gg_tools_c_test
 SRC_ALL_C_TEST = \
 $(addprefix graph/, $(SRC_GRAPH_C_TEST))
 
-TST_SRC_C_ALL = $(SRC_ALL_C_TEST) gg_tools_c_test.c
+TST_SRC_C_ALL = $(SRC_ALL_C_TEST) ggtools_c_test.c
 TST_C_SOURCES = $(addprefix $(TST_WRAP_DIR)/, $(TST_SRC_C_ALL))
 TST_C_OBJS    = $(subst $(TST_WRAP_DIR), $(OBJ_DIR), $(TST_C_SOURCES:.c=.o))
 
@@ -141,7 +141,7 @@ $(OBJ_DIR)/%.o: $(TST_WRAP_DIR)/%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 cp_header:
-#	$(CP) ./wrapper/gg_tools.h ./include/
+#	$(CP) ./wrapper/ggtools.h ./include/
 
 clean:
 	$(RM) \

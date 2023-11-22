@@ -7,7 +7,7 @@
 
 int main()
 {
-  monolis_std_log_string("gg_tools_c_test");
+  monolis_std_log_string("ggtools_c_test");
 
   monolis_mpi_initialize();
 
