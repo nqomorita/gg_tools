@@ -3,6 +3,8 @@ module mod_ggtools_def_bucket
   use mod_monolis_utils
   implicit none
 
+  real(kdouble) :: ths = 1.0d-6
+
   !> @ingroup bucket
   !> 第 i 番目のバケットセルの基本情報構造体
   type type_ggtools_bucket_cell
@@ -84,7 +86,7 @@ contains
     ggtools_bucket%xmax = 0.0d0
     ggtools_bucket%dx = 0.0d0
     ggtools_bucket%nx = 0
-  end subroutine
+  end subroutine ggtools_bucket_finalize
 
   !> @ingroup bucket
   !> バケットセルの初期化処理
@@ -98,7 +100,7 @@ contains
 
     n_total = nx(1)*nx(2)*nx(3)
     allocate(ggtools_bucket_cell(n_total))
-  end subroutine
+  end subroutine ggtools_bucket_cell_init
 
   !> @ingroup bucket
   !> バケットセルの終了処理
@@ -112,7 +114,7 @@ contains
       if(ggtools_bucket_cell(i)%nid == 0) cycle
       deallocate(ggtools_bucket_cell(i)%id)
     enddo
-  end subroutine
+  end subroutine ggtools_bucket_cell_finalize
 
   !> @ingroup bucket
   !> LBB を指定してバケットセルに id を登録する関数
@@ -128,7 +130,28 @@ contains
     real(kdouble) :: xmax_local(3)
     !> バケットセルに登録する id
     integer(kint) :: id
-  end subroutine
+    integer(kint) :: x, y, z, in, imin(3), imax(3)
+    real(kdouble) :: x_point(3)
+
+    x_point(1) = xmin_local(1) - ths
+    x_point(2) = xmin_local(2) - ths
+    x_point(3) = xmin_local(3) - ths
+    call ggtools_bucket_get_int_coordinate(ggtools_bucket, x_point, imin)
+
+    x_point(1) = xmax_local(1) + ths
+    x_point(2) = xmax_local(2) + ths
+    x_point(3) = xmax_local(3) + ths
+    call ggtools_bucket_get_int_coordinate(ggtools_bucket, x_point, imax)
+
+    do z = imin(3), imax(3)
+    do y = imin(2), imax(2)
+    do x = imin(1), imax(1)
+      in = get_index(ggtools_bucket%nx, x, y, z)
+      call ggtools_bucket_set_id_main(ggtools_bucket_cell(in), id)
+    enddo
+    enddo
+    enddo
+  end subroutine ggtools_bucket_set_id_by_lbb
 
   !> @ingroup bucket
   !> 座標を指定して 1 つのバケットセルに id を登録する関数
@@ -142,7 +165,10 @@ contains
     real(kdouble) :: x_point(3)
     !> バケットセルに登録する id
     integer(kint) :: id
-  end subroutine
+    integer(kint) :: int_id(3)
+
+    call get_int_coordinate(ggtools_bucket, x_point, int_id)
+  end subroutine ggtools_bucket_set_id_by_point
 
   !> @ingroup dev
   !> バケットへの情報登録（メイン関数）
@@ -173,7 +199,7 @@ contains
     integer(kint) :: nid
     !> バケットセルに登録された nid 個の 1 次元整数配列
     integer(kint), allocatable :: id_array(:)
-  end subroutine
+  end subroutine ggtools_bucket_get_by_point
 
   !> @ingroup bucket
   !> 入力した LBB を内包するバケットセルから、nid 個の整数配列 id_array を取得する関数
@@ -196,7 +222,7 @@ contains
     !バケットセルの番号列を返す
     !int の min, max の範囲で、バケットセルにアクセスし、個々の n_id_i, id_array_i を取得（ただし実体としては持っていない）
     !n_id_i, id_array_i から重複削除し、n_id, id_array を計算
-  end subroutine
+  end subroutine ggtools_bucket_get_by_lbb
 
   !> @ingroup dev
   !> バケットセル整数座標の取得
@@ -219,6 +245,23 @@ contains
     if(id(2) > ggtools_bucket%nx(2)) id(2) = ggtools_bucket%nx(2)
     if(id(3) > ggtools_bucket%nx(3)) id(3) = ggtools_bucket%nx(3)
   end subroutine ggtools_bucket_get_int_coordinate
+
+  !> @ingroup dev
+  !> バケットセル整数座標からバケットセル id を取得
+  function get_index(div, x, y, z)
+    implicit none
+    !> バケットセル分割数
+    integer(kint) :: div(3)
+    !> バケットセル整数座標 x
+    integer(kint) :: x
+    !> バケットセル整数座標 y
+    integer(kint) :: y
+    !> バケットセル整数座標 z
+    integer(kint) :: z
+    !> バケットセル id
+    integer(kint) :: get_index
+    get_index = x + (y-1)*div(1) + (z-1)*div(1)*div(2)
+  end function get_index
 
   !> @ingroup bucket
   !> バケットサイズを取得
