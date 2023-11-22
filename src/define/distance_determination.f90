@@ -24,7 +24,7 @@ contains
     real(kdouble), intent(in) :: ths
     !> 発散判定閾値
     real(kdouble), intent(in) :: ths_up
-    !> 数値微分の差分値
+    !> 数値微分の摂動値
     real(kdouble), intent(in) :: eps
     !> 収束判定フラグ
     logical, intent(out) :: is_converge
@@ -33,7 +33,7 @@ contains
       subroutine shape_func(n_base, local_pos, weight)
         !> 要素を構成する形状関数の個数
         integer(4), intent(in) :: n_base
-        !> 入力座標に最も近い局所座標
+        !> 形状関数を計算する局所座標
         real(8), intent(in) :: local_pos(2)
         !> 形状関数の重み
         real(8), intent(out) :: weight(n_base)

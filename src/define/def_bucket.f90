@@ -5,16 +5,17 @@ module mod_gg_tools_def_bucket
 
   !> @ingroup bucket
   !> バケットセル構造体
-  type type_gg_tools_bucket_search_main
-    !> バケットセルに登録された番号数
+!> この構造体を複数定義するか？
+  type type_gg_tools_bucket_cell
+    !> バケットセルに登録された要素番号の数
     integer(kint) :: nid = 0
-    !> バケットセルに登録された番号
+    !> バケットセルに登録された要素番号
     integer(kint), allocatable :: id(:)
-  end type type_gg_tools_bucket_search_main
+  end type type_gg_tools_bucket_cell
 
   !> @ingroup bucket
   !> バケット検索構造体
-  type type_gg_tools_bucket_search
+  type type_gg_tools_bucket
     !> バケットの分割数（nx, ny, nz）
     integer(kint) :: n_div(3)
     !> バウンダリボックス（xmin, xmax, ymin, ymax, zmin, zmax）
@@ -23,12 +24,14 @@ module mod_gg_tools_def_bucket
     real(kdouble) :: dx(3)
     !> 検索領域の判定閾値
     real(kdouble) :: ths
+
+! 上下で分ける
     !> 要素次元ごとのバケットセル構造体（配列サイズ nx × ny × nz）
-    type(type_gg_tools_bucket_search_main), allocatable :: cell_0d(:)
-    type(type_gg_tools_bucket_search_main), allocatable :: cell_1d(:)
-    type(type_gg_tools_bucket_search_main), allocatable :: cell_2d(:)
-    type(type_gg_tools_bucket_search_main), allocatable :: cell_3d(:)
-  end type type_gg_tools_bucket_search
+    type(type_gg_tools_bucket_cell), allocatable :: cell_0d(:)
+    type(type_gg_tools_bucket_cell), allocatable :: cell_1d(:)
+    type(type_gg_tools_bucket_cell), allocatable :: cell_2d(:)
+    type(type_gg_tools_bucket_cell), allocatable :: cell_3d(:)
+  end type type_gg_tools_bucket
 
 contains
 
