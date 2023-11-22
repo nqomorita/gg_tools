@@ -1,7 +1,7 @@
 #> ggtools Makefile
 
 ##> compiler setting
-FC     = mpif90 -Wl,-ld_classic
+FC     = mpif90
 FFLAGS = -fPIC -O2 -mtune=native -march=native -std=legacy -Wno-missing-include-dirs
 CC     = mpicc
 CFLAGS = -fPIC -O2
